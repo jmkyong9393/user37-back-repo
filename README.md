@@ -1,16 +1,16 @@
-# 📚 도서 관리 시스템 백엔드 (miniproject05)
+# 도서 관리 시스템 백엔드 (miniproject05)
 KT 에이블스쿨 9기 미니프로젝트 5차 백엔드 저장소입니다.
 
 본 프로젝트는 React 프론트엔드 애플리케이션(mini-project04)과 연동하여 동작하는 Spring Boot 기반의 도서 관리 백엔드 API 서버입니다.
 
-## 🛠️ 기술 스택 (Tech Stack)
+## 기술 스택 (Tech Stack)
 * **Language**: Java 17
 * **Framework**: Spring Boot 4.x (Spring Boot 3.x 이상 표준 적용)
 * **Database**: H2 Database (인메모리 모드)
 * **ORM**: Spring Data JPA & Hibernate
 * **Utilities**: Lombok, Spring Validation
 
-## 🏗️ 프로젝트 아키텍처 (Layered Architecture)
+## 프로젝트 아키텍처 (Layered Architecture)
 본 프로젝트는 관심사 분리와 가독성을 위해 **계층형 아키텍처**로 설계되었습니다.
 * **Controller**: HTTP 요청 수신, API 라우팅, CORS 설정 적용 및 DTO/객체 변환 (`@RestController`, `@CrossOrigin`)
 * **Service**: 핵심 비즈니스 로직 처리, 트랜잭션 범위 지정 및 데이터 수정 처리 (`@Service`, `@Transactional`)
@@ -29,7 +29,7 @@ KT 에이블스쿨 9기 미니프로젝트 5차 백엔드 저장소입니다.
 3. **글로벌 예외 처리**: 책 미존재 시 `404 Not Found`, 유효성 검증 실패 시 `400 Bad Request` 에러 자동 변환 반환
 4. **H2 인메모리 초기화**: 서버 기동 시 롬복 빌더를 활용하여 테스트용 샘플 도서 5권 자동 등록
 
-## 🚀 로컬 서버 실행 방법
+## 로컬 서버 실행 방법
 ### 의존성 빌드 및 실행
 프로젝트 루트 폴더에서 아래 명령어를 실행하여 백엔드 API 서버를 기동합니다.
 ```bash
