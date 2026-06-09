@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
-@CrossOrigin(origins = "*")
 public class BookController {
 
     private final BookService bookService;
@@ -50,6 +49,12 @@ public class BookController {
     @PatchMapping("/{id}")
     public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
         return bookService.update(id, book);
+    }
+
+    // 교안 p.31, p.57: PATCH /books/{id}/cover - AI 표지 이미지 저장
+    @PatchMapping("/{id}/cover")
+    public Book updateCover(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        return bookService.updateCoverImage(id, request.get("coverImageUrl"));
     }
 
     // 교안 p.167: DELETE /books/{id} - 삭제 (204 No Content)

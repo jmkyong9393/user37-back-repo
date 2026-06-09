@@ -19,7 +19,14 @@ public class GlobalExceptionHandler {
     // 교안 p.178: @Valid 검증 실패 -> 400 에러 응답
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValid(MethodArgumentNotValidException e) {
-        String msg = e.getBindingResult().getFieldError().getDefaultMessage();
+        String msg = e.getBindingResult().getFieldError() != null
+                ? e.getBindingResult().getFieldError().getDefaultMessage()
+                : "Validation failed";
         return ResponseEntity.status(400).body(Map.of("message", msg));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequest(IllegalArgumentException e) {
+        return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
     }
 }
