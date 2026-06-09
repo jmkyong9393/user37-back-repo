@@ -14,4 +14,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     
     // 교안 p.130: And - 복합 조건 검색
     List<Book> findByTitleAndAuthor(String title, String author);
+
+    // 최신 도서 3개 쿼리
+    List<Book> findTop3ByOrderByCreatedAtDesc();
+
+    // 인기 도서 3개 쿼리
+    List<Book> findTop3ByOrderByLikeCountDesc();
 }

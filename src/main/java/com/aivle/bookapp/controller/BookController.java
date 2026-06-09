@@ -29,7 +29,13 @@ public class BookController {
 
     // 교안 p.157: GET /books - 목록 조회
     @GetMapping
-    public List<Book> getAll() {
+    public List<Book> getAll(
+//            @RequestParam(defaultValue = "all") String searchType,
+//            @RequestParam(defaultValue = "") String keyWord,
+//            @RequestParam(defaultValue = "time") String sortBy,
+//            @RequestParam(defaultValue = "desc") String order,
+//            @RequestParam(defaultValue = "1") int page
+    ) {
         return bookService.findAll();
     }
 
@@ -39,8 +45,20 @@ public class BookController {
         return bookService.findById(id);
     }
 
+    // 신규 도서 3개
+    @GetMapping("/new")
+    public List<Book> getNewBooks(){
+        return bookService.searchNew();
+    }
+
+    // 인기 도서 3개
+    @GetMapping("/popular")
+    public List<Book> getPopularBooks(){
+        return bookService.searchPopular();
+    }
+
     // 교안 p.162: POST /books - 신규 생성 (201 Created)
-    @PostMapping
+    @PostMapping("/books")
     public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
         Book saved = bookService.create(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
