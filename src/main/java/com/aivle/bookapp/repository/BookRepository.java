@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-    
+
     // 교안 p.128: 쿼리 메서드 - 제목 일치 검색
     List<Book> findByTitle(String title);
     
@@ -19,10 +19,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByTitleAndAuthor(String title, String author);
 
     // 저자별 검색
-    List<Book> findByAuthor(String author);
+    List<Book> findByAuthorContaining(String author);
 
     // 출판사별 검색
-    List<Book> findByPublisher(String publisher);
+    List<Book> findByPublisherContaining(String publisher);
 
     // 컨텐츠별 검색
     List<Book> findByContentContaining(String content);

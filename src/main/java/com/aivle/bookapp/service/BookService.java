@@ -122,17 +122,17 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<Book> searchByTitle(String title) {
-        return bookRepository.findByTitle(title);
+        return bookRepository.findByTitleContaining(title);
     }
 
     @Transactional(readOnly = true)
     public List<Book> searchByAuthor (String author) {
-        return bookRepository.findByAuthor(author);
+        return bookRepository.findByAuthorContaining(author);
     }
 
     @Transactional(readOnly = true)
     public List<Book> searchByPublisher (String publisher) {
-        return bookRepository.findByPublisher(publisher);
+        return bookRepository.findByPublisherContaining(publisher);
     }
 
     @Transactional(readOnly = true)
