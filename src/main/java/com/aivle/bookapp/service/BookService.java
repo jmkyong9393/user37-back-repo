@@ -98,12 +98,6 @@ public class BookService {
         return bookRepository.findByTitleContaining(keyword);
     }
 
-    // 교안 p.130: 복합 조건 검색
-    @Transactional(readOnly = true)
-    public List<Book> searchByTitleAndAuthor(String title, String author) {
-        return bookRepository.findByTitleAndAuthor(title, author);
-    }
-
     // 교안 p.57: AI 표지 생성 결과(Data URL)를 도서 정보에 저장
     @Transactional
     public Book updateCoverImage(Long id, String coverImageUrl){
