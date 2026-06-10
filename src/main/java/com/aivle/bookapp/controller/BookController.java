@@ -4,6 +4,7 @@ import com.aivle.bookapp.domain.Book;
 import com.aivle.bookapp.dto.request.BookCreateRequest;
 import com.aivle.bookapp.dto.request.BookUpdateRequest;
 import com.aivle.bookapp.dto.request.CoverImageRequest;
+import com.aivle.bookapp.dto.request.LikeRequest;
 import com.aivle.bookapp.dto.response.BookPageResponse;
 import com.aivle.bookapp.dto.response.BookResponse;
 import com.aivle.bookapp.service.BookService;
@@ -139,7 +140,10 @@ public class BookController {
                 .toList();
     }
     @PatchMapping("/{id}/like")
-    public BookResponse like(@PathVariable Long id){
-        return BookResponse.from(bookService.like(id));
+    public BookResponse like(
+            @PathVariable Long id,
+            @RequestBody LikeRequest request
+    ) {
+        return BookResponse.from(bookService.like(id, request.getUserId()));
     }
 }
