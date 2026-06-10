@@ -54,6 +54,7 @@ public class BookService {
     public Book update(Long id, Book book, String loginUserId) {
         Book existing = findById(id);
 
+        // 책의 작가와 로그인한 유저의 아이디 대조
         if (!existing.getAuthor().equals(loginUserId)) {
             throw new IllegalArgumentException("자신이 등록한 책만 수정할 수 있습니다.");
         }
@@ -94,13 +95,12 @@ public class BookService {
     // 교안 p.167: DELETE 삭제 비즈니스 로직
     @Transactional
     public void delete(Long id, String loginUserId) {
-        Book existing = findById(id);
-
         if (!bookRepository.existsById(id)) {
             throw new BookNotFoundException(id);
         }
 
-        if (!existing.getAuthor().equals(loginUserId)) {
+        // 책의 작가와 로그인한 유저의 아이디 대조
+        if (!findById(id).getAuthor().equals(loginUserId)) {
             throw new IllegalArgumentException("자신이 등록한 책만 삭제할 수 있습니다.");
         }
 

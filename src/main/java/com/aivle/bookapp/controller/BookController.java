@@ -6,6 +6,7 @@ import com.aivle.bookapp.dto.request.BookUpdateRequest;
 import com.aivle.bookapp.dto.request.CoverImageRequest;
 import com.aivle.bookapp.dto.response.BookResponse;
 import com.aivle.bookapp.service.BookService;
+import com.aivle.bookapp.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
+    private final JwtUtil jwtUtil;
 
     // 교안 p.157: GET /books - 목록 조회
     @GetMapping
@@ -57,16 +59,16 @@ public class BookController {
     public BookResponse updateBook(
             @PathVariable Long id,
             @RequestBody BookUpdateRequest request,
-            @RequestHeader("Authorization") String token) {
-        String loginUserId = token; // 토큰 추가 후 수정
+            @RequestHeader("Authorization") String token) { // 헤더로 토큰 전달
+        String loginUserId = jwtUtil.getNicknameFromToken(token); // 토큰 해독
 
         return BookResponse.from(bookService.update(id, request.toEntity(), loginUserId));
     }
 
     // 교안 p.167: DELETE /books/{id} - 삭제 (204 No Content)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        String loginUserId = token; // 토큰 추가 후 수정
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id, @RequestHeader("Authorization") String token) {  // 헤더로 토큰 전달
+        String loginUserId = jwtUtil.getNicknameFromToken(token);  // 토큰 해독
 
         bookService.delete(id, loginUserId);
         return ResponseEntity.noContent().build();
