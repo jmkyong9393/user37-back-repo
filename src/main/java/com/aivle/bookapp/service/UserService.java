@@ -44,7 +44,12 @@ public class UserService {
 
         User saved = userRepository.save(user);
 
-        return new UserRegisterResponse(saved.getUserId(), saved.getName(), saved.getEmail(), saved.getNickname());
+        return UserRegisterResponse.builder()
+                .userId(saved.getUserId())
+                .name(saved.getName())
+                .email(saved.getEmail())
+                .nickname(saved.getNickname())
+                .build();
     }
 
     @Transactional(readOnly = true)
