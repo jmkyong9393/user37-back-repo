@@ -1,9 +1,13 @@
 package com.aivle.bookapp.service;
 
 import com.aivle.bookapp.domain.Book;
+import com.aivle.bookapp.domain.Likes;
+import com.aivle.bookapp.domain.User;
 import com.aivle.bookapp.exception.BookAlreadyExistsException;
 import com.aivle.bookapp.exception.BookNotFoundException;
 import com.aivle.bookapp.repository.BookRepository;
+import com.aivle.bookapp.repository.LikeRepository;
+import com.aivle.bookapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,8 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final LikeRepository likeRepository;
+    private final UserRepository userRepository;
 
     // 교안 p.171: 조회 메서드 - readOnly = true 최적화
     @Transactional(readOnly = true)
@@ -160,16 +166,35 @@ public class BookService {
     }
 
     @Transactional
-    public Book like(Long id){
-        Book book = findById(id);
+    public Book like(Long bookId, String userId) {
+        Book book = findById(bookId);
 
-        Integer currentlikecount = book.getLikeCount();
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
-        if(currentlikecount == null){
-            currentlikecount = 0;
+        Likes existingLike = likeRepository
+                .findByUser_UserIdAndBook_Id(userId, bookId)
+                .orElse(null);
+
+        Integer currentLikeCount = book.getLikeCount();
+
+        if (currentLikeCount == null) {
+            currentLikeCount = 0;
         }
 
-        book.setLikeCount(currentlikecount + 1);
+        if (existingLike != null) {
+            likeRepository.delete(existingLike);
+            book.setLikeCount(Math.max(currentLikeCount - 1, 0));
+        } else {
+            Likes likes = Likes.builder()
+                    .user(user)
+                    .book(book)
+                    .build();
+
+            likeRepository.save(likes);
+            book.setLikeCount(currentLikeCount + 1);
+        }
+
         return bookRepository.save(book);
     }
 }
