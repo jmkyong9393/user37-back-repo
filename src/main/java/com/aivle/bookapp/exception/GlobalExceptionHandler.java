@@ -29,4 +29,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleBadRequest(IllegalArgumentException e) {
         return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
     }
+
+    @ExceptionHandler(BookAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleAlready(BookAlreadyExistsException e){
+        return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+    }
 }

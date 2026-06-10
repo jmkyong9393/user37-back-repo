@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
@@ -32,7 +33,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     // 태그별 검색
     List<Book> findByTagsContaining(String tags);
-
+    
     // 전체 검색
     @Query("SELECT b FROM Book b WHERE " +
             "b.title LIKE %:keyword% OR " +

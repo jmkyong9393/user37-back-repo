@@ -1,6 +1,7 @@
 package com.aivle.bookapp.service;
 
 import com.aivle.bookapp.domain.Book;
+import com.aivle.bookapp.exception.BookAlreadyExistsException;
 import com.aivle.bookapp.exception.BookNotFoundException;
 import com.aivle.bookapp.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,9 @@ public class BookService {
         }
         if (book.getLikeCount() == null) {
             book.setLikeCount(0);
+        }
+        if (bookRepository.findIdByTitleAndAuthor(book.getTitle(), book.getAuthor()).isPresent()){
+            throw new BookAlreadyExistsException(book.getTitle());
         }
         return bookRepository.save(book);
     }
