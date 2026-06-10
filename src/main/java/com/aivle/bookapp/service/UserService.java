@@ -1,6 +1,5 @@
 package com.aivle.bookapp.service;
 
-import com.aivle.bookapp.domain.Book;
 import com.aivle.bookapp.domain.User;
 import com.aivle.bookapp.dto.request.UserLoginRequest;
 import com.aivle.bookapp.dto.request.UserRegisterRequest;
@@ -8,6 +7,7 @@ import com.aivle.bookapp.dto.response.UserLoginResponse;
 import com.aivle.bookapp.dto.response.UserRegisterResponse;
 import com.aivle.bookapp.exception.UserNotFoundException;
 import com.aivle.bookapp.repository.UserRepository;
+import com.aivle.bookapp.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +20,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional(readOnly = true)
     public List<User> findAll() {
@@ -55,17 +56,16 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserLoginResponse login(UserLoginRequest request) {
         User user = userRepository.findByUserId(request.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 아이디입니다."));
+                .orElseThrow(() -> new UserNotFoundException(request.getUserId()));
 
         if(!user.getPassword().equals(request.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        //임시
-        String mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mockToken..." ;
+        String token = jwtUtil.createToken(user);
 
         return UserLoginResponse.builder()
-                .token(mockToken)
+                .token(token)
                 .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .build();

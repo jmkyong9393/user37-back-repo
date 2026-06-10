@@ -1,6 +1,5 @@
 package com.aivle.bookapp.dto.request;
 
-import com.aivle.bookapp.domain.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
