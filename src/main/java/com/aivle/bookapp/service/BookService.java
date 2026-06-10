@@ -1,11 +1,20 @@
 package com.aivle.bookapp.service;
 
 import com.aivle.bookapp.domain.Book;
+import com.aivle.bookapp.domain.Likes;
+import com.aivle.bookapp.domain.User;
 import com.aivle.bookapp.exception.BookAlreadyExistsException;
 import com.aivle.bookapp.exception.BookNotFoundException;
 import com.aivle.bookapp.repository.BookRepository;
+import com.aivle.bookapp.repository.LikeRepository;
 import com.aivle.bookapp.repository.UserRepository;
+import com.aivle.bookapp.specification.BookSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +27,54 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final LikeRepository likeRepository;
     private final UserRepository userRepository;
 
     // 교안 p.171: 조회 메서드 - readOnly = true 최적화
-    @Transactional(readOnly = true)
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    //반환형 Page<Book> 으로 수정
+    @Transactional(readOnly = true)     // 검색어값 없을 시 작동
+    public Page<Book> findAll(int page) {
+        Pageable pageable = PageRequest.of(Math.max(0, page - 1), 12,
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+
+        if (bookPage.isEmpty() && bookPage.getTotalPages() > 0) {       // page 값 초과 시 예외 처리(마지막 페이지로 이동)
+            Pageable lastPageable = PageRequest.of(bookPage.getTotalPages() - 1, 12,
+                    Sort.by(Sort.Direction.DESC, "createdAt"));
+            bookPage = bookRepository.findAll(lastPageable);
+        }
+
+        return bookPage;
+    }
+
+    @Transactional(readOnly = true)     // 검색 시 작동
+    public  Page<Book> search(
+            String searchType,  //검색 타입 (all, title, author 등등)
+            String keyWord,     //검색 키워드
+            String sortBy,      //정렬 기준 (등록 시간, 제목, 추천 수 등)
+            String order,       //DESC/ASC
+            int page            //페이징(페이지당 12행)
+    ){
+        Sort.Direction direction = "desc".equalsIgnoreCase(order) ?
+                Sort.Direction.DESC : Sort.Direction.ASC;
+
+        if (sortBy.equals("time"))
+            sortBy = "createdAt";
+        Sort sort = Sort.by(direction, sortBy);
+
+        Pageable pageable = PageRequest.of(Math.max(0, page-1), 12, sort);
+
+        Specification<Book> spec = BookSpecification.search(searchType, keyWord);
+
+        Page<Book> bookPage = bookRepository.findAll(spec, pageable);
+
+        if (bookPage.isEmpty() && bookPage.getTotalPages() > 0) {   // page 값 초과 시 예외 처리
+            Pageable lastPageable = PageRequest.of(bookPage.getTotalPages() - 1, 12, sort);
+            bookPage = bookRepository.findAll(spec, lastPageable);
+        }
+
+        return bookPage;
     }
 
     @Transactional(readOnly = true)
@@ -173,16 +224,35 @@ public class BookService {
     }
 
     @Transactional
-    public Book like(Long id){
-        Book book = findById(id);
+    public Book like(Long bookId, String userId) {
+        Book book = findById(bookId);
 
-        Integer currentlikecount = book.getLikeCount();
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
-        if(currentlikecount == null){
-            currentlikecount = 0;
+        Likes existingLike = likeRepository
+                .findByUser_UserIdAndBook_Id(userId, bookId)
+                .orElse(null);
+
+        Integer currentLikeCount = book.getLikeCount();
+
+        if (currentLikeCount == null) {
+            currentLikeCount = 0;
         }
 
-        book.setLikeCount(currentlikecount + 1);
+        if (existingLike != null) {
+            likeRepository.delete(existingLike);
+            book.setLikeCount(Math.max(currentLikeCount - 1, 0));
+        } else {
+            Likes likes = Likes.builder()
+                    .user(user)
+                    .book(book)
+                    .build();
+
+            likeRepository.save(likes);
+            book.setLikeCount(currentLikeCount + 1);
+        }
+
         return bookRepository.save(book);
     }
 }
