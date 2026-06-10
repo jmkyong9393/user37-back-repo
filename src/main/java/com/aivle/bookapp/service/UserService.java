@@ -1,14 +1,18 @@
 package com.aivle.bookapp.service;
 
+import com.aivle.bookapp.domain.Book;
 import com.aivle.bookapp.domain.User;
 import com.aivle.bookapp.dto.request.UserLoginRequest;
 import com.aivle.bookapp.dto.request.UserRegisterRequest;
+import com.aivle.bookapp.dto.response.UserLoginResponse;
+import com.aivle.bookapp.dto.response.UserRegisterResponse;
 import com.aivle.bookapp.exception.UserNotFoundException;
 import com.aivle.bookapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,25 +21,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
-    public void register(UserRegisterRequest request) {
-        // 1. 필수 필드 누락 검사 (하나라도 비어있으면 예외 처리)
-        if (request.getUserId() == null || request.getUserId().isBlank()) {
-            throw new IllegalArgumentException("아이디는 필수 입력 항목입니다.");
-        }
-        if (request.getPassword() == null || request.getPassword().isBlank()) {
-            throw new IllegalArgumentException("비밀번호는 필수 입력 항목입니다.");
-        }
-        if (request.getName() == null || request.getName().isBlank()) {
-            throw new IllegalArgumentException("이름은 필수 입력 항목입니다.");
-        }
-        if (request.getEmail() == null || request.getEmail().isBlank()) {
-            throw new IllegalArgumentException("이메일은 필수 입력 항목입니다.");
-        }
-        if (request.getNickname() == null || request.getNickname().isBlank()) {
-            throw new IllegalArgumentException("닉네임은 필수 입력 항목입니다.");
-        }
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 
+    @Transactional
+    public UserRegisterResponse register(UserRegisterRequest request) {
         Optional<User> findUser = userRepository.findByUserId(request.getUserId());
 
         if (findUser.isPresent()) {
@@ -49,11 +41,14 @@ public class UserService {
                 .email(request.getEmail())
                 .nickname(request.getNickname())
                 .build();
-        userRepository.save(user);
+
+        User saved = userRepository.save(user);
+
+        return new UserRegisterResponse(saved.getUserId(), saved.getName(), saved.getEmail(), saved.getNickname());
     }
 
     @Transactional(readOnly = true)
-    public String login(UserLoginRequest request) {
+    public UserLoginResponse login(UserLoginRequest request) {
         User user = userRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 아이디입니다."));
 
@@ -61,7 +56,14 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return "환영합니다. " + user.getName() + "님!";
+        //임시
+        String mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mockToken..." ;
+
+        return UserLoginResponse.builder()
+                .token(mockToken)
+                .userId(user.getUserId())
+                .nickname(user.getNickname())
+                .build();
     }
 
 }

@@ -1,15 +1,18 @@
 package com.aivle.bookapp.controller;
 
+import com.aivle.bookapp.domain.User;
 import com.aivle.bookapp.dto.request.UserLoginRequest;
 import com.aivle.bookapp.dto.request.UserRegisterRequest;
+import com.aivle.bookapp.dto.response.UserLoginResponse;
+import com.aivle.bookapp.dto.response.UserRegisterResponse;
 import com.aivle.bookapp.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,15 +21,20 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping
+    public List<User> getAll() {
+        return userService.findAll();
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegisterRequest request) {
-        userService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
+    public ResponseEntity<UserRegisterResponse> register(@Valid @RequestBody UserRegisterRequest request) {
+        UserRegisterResponse res = userService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest request) {
-        String msg = userService.login(request);
-        return ResponseEntity.ok(msg);
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        UserLoginResponse res = userService.login(request);
+        return ResponseEntity.ok(res);
     }
 }
