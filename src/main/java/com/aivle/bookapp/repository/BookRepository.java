@@ -14,6 +14,8 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
 
     Optional<Long> findIdByTitleAndAuthor(String title, User author); // findId.. 이므로 반환값 Long으로 수정
 
+    Optional<Book> findByTitleAndAuthor(String title, User author);
+
     // 교안 p.128: 쿼리 메서드 - 제목 일치 검색
     List<Book> findByTitle(String title);
     

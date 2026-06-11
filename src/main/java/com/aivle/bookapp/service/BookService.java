@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -117,6 +118,13 @@ public class BookService {
         if (existing.getAuthor() == null || !existing.getAuthor().getUserId().equals(loginUserId)) {
             throw new IllegalArgumentException("자신이 등록한 책만 수정할 수 있습니다.");
         }
+
+        User authorUser = book.getAuthor() != null ?
+                book.getAuthor() : existing.getAuthor();
+
+        Book existsBook = bookRepository.findByTitleAndAuthor(book.getTitle(), book.getAuthor()).orElse(null);
+        if (!existsBook.getId().equals(id))
+            throw new BookAlreadyExistsException("이미 작성하신 제목의 도서입니다.");
         
         if (book.getTitle() != null) {
             existing.setTitle(book.getTitle());
