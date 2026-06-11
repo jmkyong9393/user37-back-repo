@@ -18,15 +18,34 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    @Value("${jwt.access-expiration}")
+    private Long accessExpiration;
 
-    public String createToken(User user) {
+    @Value("${jwt.refresh-expiration}")
+    private Long refreshExpiration;
+
+    public String createAccessToken(User user) {
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + expiration);
+        Date expiredDate = new Date(now.getTime() + accessExpiration);
 
         return Jwts.builder()
                 .subject(user.getUserId())
+                .claim("type", "access")
+                .claim("nickname", user.getNickname())
+                .claim("email", user.getEmail())
+                .issuedAt(now)
+                .expiration(expiredDate)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String createRefreshToken(User user) {
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() + refreshExpiration);
+
+        return Jwts.builder()
+                .subject(user.getUserId())
+                .claim("type", "refresh")
                 .claim("nickname", user.getNickname())
                 .claim("email", user.getEmail())
                 .issuedAt(now)
@@ -48,6 +67,14 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    public boolean isAccessToken(String token) {
+        return "access".equals(getClaims(token).get("type", String.class));
+    }
+
+    public boolean isRefreshToken(String token) {
+        return "refresh".equals(getClaims(token).get("type", String.class));
     }
 
     // 토큰 내용 파싱

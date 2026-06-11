@@ -6,7 +6,7 @@ spring:
     name: bookapp
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:bookdb
+    url: jdbc:h2:file:./data/bookdb
     username: sa
     password: 1234
   h2:
@@ -20,4 +20,5 @@ spring:
 
 jwt:
   secret: aivle-bookapp-jwt-secret-key-2026!
-  expiration: 3600000
+  access-expiration: 10800000
+  refresh-expiration: 86400000

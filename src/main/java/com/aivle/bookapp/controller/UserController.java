@@ -1,8 +1,10 @@
 package com.aivle.bookapp.controller;
 
 import com.aivle.bookapp.domain.User;
+import com.aivle.bookapp.dto.request.RefreshTokenRequest;
 import com.aivle.bookapp.dto.request.UserLoginRequest;
 import com.aivle.bookapp.dto.request.UserRegisterRequest;
+import com.aivle.bookapp.dto.response.RefreshTokenResponse;
 import com.aivle.bookapp.dto.response.UserLoginResponse;
 import com.aivle.bookapp.dto.response.UserRegisterResponse;
 import com.aivle.bookapp.service.UserService;
@@ -35,6 +37,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
         UserLoginResponse res = userService.login(request);
+        return ResponseEntity.ok(res);
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        RefreshTokenResponse res = userService.refresh(request);
         return ResponseEntity.ok(res);
     }
 }

@@ -39,8 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authorizationHeader.substring(7);
 
         // 토큰이 유효하면 Spring Security 인증 정보 등록
-        if (jwtUtil.validateToken(token) &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (jwtUtil.validateToken(token)
+                && jwtUtil.isAccessToken(token)
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             String userId = jwtUtil.getUserId(token);
 

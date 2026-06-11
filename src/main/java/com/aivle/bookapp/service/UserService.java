@@ -1,8 +1,10 @@
 package com.aivle.bookapp.service;
 
 import com.aivle.bookapp.domain.User;
+import com.aivle.bookapp.dto.request.RefreshTokenRequest;
 import com.aivle.bookapp.dto.request.UserLoginRequest;
 import com.aivle.bookapp.dto.request.UserRegisterRequest;
+import com.aivle.bookapp.dto.response.RefreshTokenResponse;
 import com.aivle.bookapp.dto.response.UserLoginResponse;
 import com.aivle.bookapp.dto.response.UserRegisterResponse;
 import com.aivle.bookapp.exception.UserNotFoundException;
@@ -62,13 +64,36 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = jwtUtil.createToken(user);
+        String accessToken = jwtUtil.createAccessToken(user);
+        String refreshToken = jwtUtil.createRefreshToken(user);
 
         return UserLoginResponse.builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public RefreshTokenResponse refresh(RefreshTokenRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다.");
+        }
+
+        if (!jwtUtil.isRefreshToken(refreshToken)) {
+            throw new IllegalArgumentException("리프레시 토큰이 아닙니다.");
+        }
+
+        String userId = jwtUtil.getUserId(refreshToken);
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        String newAccessToken = jwtUtil.createAccessToken(user);
+
+        return new RefreshTokenResponse(newAccessToken);
+    }
 }
