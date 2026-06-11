@@ -164,6 +164,7 @@ public class BookService {
                 !book.getAuthor().getUserId().trim().equalsIgnoreCase(loginUserId.trim())) {
             throw new IllegalArgumentException("자신이 등록한 책만 삭제할 수 있습니다.");
         }
+        likeRepository.deleteByBook(book);
 
         bookRepository.deleteById(id);
     }
