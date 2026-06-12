@@ -252,3 +252,15 @@ npm run dev
 
 ### 5. 다이내믹 AI 추천 헤더 배너 (`Header`)
 * 5초 주기로 자동 슬라이딩되는 상단 롤링 배너를 제공하며, AI 큐레이션 엔진에 의해 캐싱된 추천 데이터가 있을 시 AI 추천 책 정보와 함께 감성적 큐레이션 사유(`reason`)를 홈 배너 영역에 실시간 연동합니다. (배너 추천 데이터는 인기도서 목록을 기반으로 추출됩니다.)
+
+<img width="522" height="242" alt="image" src="https://github.com/user-attachments/assets/f1074142-6479-42fc-92f1-7639f335ab1b" />
+<img width="462" height="390" alt="image" src="https://github.com/user-attachments/assets/9706b83d-67c0-404d-bfe7-697ce062ec70" />
+<img width="482" height="592" alt="image" src="https://github.com/user-attachments/assets/29ad15e5-52a2-4803-a8af-c1bf096d612c" />
+<img width="472" height="417" alt="image" src="https://github.com/user-attachments/assets/5a8c1109-41dc-4360-b17b-da3cdd87e983" />
+<img width="462" height="412" alt="image" src="https://github.com/user-attachments/assets/5603c9f9-bfa3-4420-bd76-435a88508b9a" />
+<img width="596" height="517" alt="image" src="https://github.com/user-attachments/assets/12f1393c-0c80-41a8-9ce3-214290377c34" />
+
+
+
+
+
