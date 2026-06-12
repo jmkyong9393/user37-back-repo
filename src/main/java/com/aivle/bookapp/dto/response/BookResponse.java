@@ -11,7 +11,7 @@ public class BookResponse {
 
     private Long id;
     private String title;
-    private User author;
+    private UserInBookResponse author;
     private String publisher;
     private String content;
     private String tags;
@@ -24,7 +24,7 @@ public class BookResponse {
         return BookResponse.builder()
                 .id(book.getId())
                 .title(book.getTitle())
-                .author(book.getAuthor())
+                .author(UserInBookResponse.from(book.getAuthor()))
                 .publisher(book.getPublisher())
                 .content(book.getContent())
                 .tags(book.getTags())

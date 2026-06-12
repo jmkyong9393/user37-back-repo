@@ -17,6 +17,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import: optional:application-local.yml
 
 jwt:
   secret: aivle-bookapp-jwt-secret-key-2026!
