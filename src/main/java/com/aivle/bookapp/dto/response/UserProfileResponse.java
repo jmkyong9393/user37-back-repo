@@ -23,6 +23,7 @@ public class UserProfileResponse {
 
     /**
      * User 엔티티 객체를 UserProfileResponse DTO로 변환하는 정적 팩토리 메서드입니다.
+     * (조회 시 사용하며, accessToken은 포함되지 않습니다.)
      *
      * @param user 변환할 User 엔티티 객체
      * @return UserProfileResponse 응답 DTO 객체
