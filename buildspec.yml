@@ -1,6 +1,8 @@
 version: 0.2
 env:
   variables:
+    AWS_DEFAULT_REGION: "us-east-1"
+    AWS_ACCOUNT_ID: "416225317325"
     EKS_CLUSTER_NAME: "user37-eks-cluster"
     ECR_REPO_NAME: "user37-back-ecr"
 phases:
