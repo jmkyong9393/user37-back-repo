@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine-jdk
+FROM public.ecr.aws/docker/library/amazoncorretto:17-alpine-jdk
 WORKDIR /app
 COPY build/libs/*.jar app.jar
 EXPOSE 8080
