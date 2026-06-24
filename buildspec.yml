@@ -1,0 +1,26 @@
+version: 0.2
+env:
+  variables:
+    EKS_CLUSTER_NAME: "user37-eks-cluster"
+    ECR_REPO_NAME: "user37-back-ecr"
+phases:
+  install:
+    commands:
+      - curl -O https://s3.us-east-1.amazonaws.com/amazon-eks/1.29.0/2024-01-04/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+  build:
+    commands:
+      - chmod +x gradlew
+      - ./gradlew clean build -x test
+      - docker build -t $IMAGE_URI .
+  post_build:
+    commands:
+      - docker push $IMAGE_URI
+      - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name $EKS_CLUSTER_NAME
+      # 매니페스트의 <IMAGE_URI>를 방금 빌드한 실제 이미지 주소로 치환
+      - sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" k8s/back-manifest.yaml
+      - kubectl apply -f k8s/back-manifest.yaml
