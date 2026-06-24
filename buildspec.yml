@@ -24,5 +24,5 @@ phases:
       - docker push $IMAGE_URI
       - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name $EKS_CLUSTER_NAME
       # 매니페스트의 <IMAGE_URI>를 방금 빌드한 실제 이미지 주소로 치환
-      - sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" k8s/back-manifest.yaml
-      - kubectl apply -f k8s/back-manifest.yaml
+      - sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" k8s/back-manifest.yml
+      - kubectl apply -f k8s/back-manifest.yml
