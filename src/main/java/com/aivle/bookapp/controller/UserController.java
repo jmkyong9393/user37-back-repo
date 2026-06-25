@@ -55,7 +55,9 @@ public class UserController {
      * 마이페이지 - 현재 로그인한 사용자의 프로필 정보를 조회합니다.
      *
      * @param loginUserId Spring Security 인증 객체로부터 추출한 현재 로그인 중인 사용자의 ID
-     * @return 200 OK와 함께 패스워드가 제외된 사용자 프로필 정보 응답 DTO (UserProfileResponse)
+     * 
+     * @return 200 OK와 함께 패스워드가 제외된 사용자 프로필 정보 응답 DTO (UserProfileRespons
+     * )
      */
     @GetMapping("/me")
     public ResponseEntity<UserProfileResponse> getMyProfile(@AuthenticationPrincipal String loginUserId) {
@@ -67,9 +69,10 @@ public class UserController {
      * 마이페이지 - 현재 로그인한 사용자의 프로필 정보를 수정합니다.
      *
      * @param loginUserId Spring Security 인증 객체로부터 추출한 현재 로그인 중인 사용자의 ID
+     * 
      * @param request 수정할 정보를 담은 DTO (UserProfileUpdateRequest)
      * @return 200 OK와 함께 수정 완료 후 패스워드가 제외된 사용자 프로필 정보 응답 DTO
-     * (UserProfileResponse)
+     *  (UserProfileResponse)
      */
     @PatchMapping("/me")
     public ResponseEntity<UserProfileResponse> updateMyProfile(
@@ -81,6 +84,7 @@ public class UserController {
 
     /**
      * 사용자의 로그아웃을 처리합니다. 데이터베이스에 저장된 사용자의 Refresh Token을 삭제합니다.
+     * 
      *
      * @param loginUserId 토큰
      * @return 200 OK
