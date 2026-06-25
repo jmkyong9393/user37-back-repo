@@ -26,25 +26,21 @@ spec:
             requests:
               cpu: 100m
               memory: 256Mi
-          # 💡 [핵심 추가] Secret의 데이터를 컨테이너 내부 환경변수로 매핑
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "prod" # prod 프로필 활성화
+            # 2. 오로라 DB 접속 주소 (본인의 오로라 DB 엔드포인트로 변경하세요!)
             - name: SPRING_DATASOURCE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: user37-db-secret
-                  key: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://user37-aurora-cluster.cluster-cqbgqrxkrfb4.us-east-1.rds.amazonaws.com:3306/bookapp?serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
+
+            # 3. 오로라 DB 접속 아이디 (보통 admin)
             - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: user37-db-secret
-                  key: SPRING_DATASOURCE_USERNAME
+              value: "admin"
+
+            # 4. 오로라 DB 접속 비밀번호
             - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: user37-db-secret
-                  key: SPRING_DATASOURCE_PASSWORD
+              value: "12345678!"
+
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
