@@ -53,10 +53,19 @@ spec:
 
           readinessProbe:
             httpGet:
-              path: /books # 실제 동작하는 API 경로로 수정하세요
+              path: /actuator/health/readiness
               port: 8080
-            initialDelaySeconds: 20
-            periodSeconds: 10
+            initialDelaySeconds: 20 # 자바/스프링 부트가 켜지는데 시간이 걸리므로 20초간은 검사를 유예함
+            periodSeconds: 10 # 이후 10초마다 찔러봄
+            failureThreshold: 3 # 3번 연속 실패하면 트래픽 차단
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30 # 완전히 켜지기 전에 섣불리 재시작하지 않도록 넉넉히 30초 대기
+            periodSeconds: 15 # 이후 15초마다 찔러봄
+            failureThreshold: 3 # 3번 연속 실패하면 컨테이너 강제 재시작
+
 ---
 apiVersion: v1
 kind: Service
