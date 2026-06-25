@@ -23,6 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	runtimeOnly 'com.mysql:mysql-connector-j' // Aurora MySQL 호환 드라이버 추가
 
 	// JWT 추가
 	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'

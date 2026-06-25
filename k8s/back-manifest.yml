@@ -26,11 +26,36 @@ spec:
             requests:
               cpu: 100m
               memory: 256Mi
+          # 💡 [핵심 추가] Secret의 데이터를 컨테이너 내부 환경변수로 매핑
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod" # prod 프로필 활성화
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: user37-db-secret
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: user37-db-secret
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user37-db-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: user37-db-secret
+                  key: JWT_SECRET
+
           readinessProbe:
             httpGet:
               path: /books # 실제 동작하는 API 경로로 수정하세요
               port: 8080
-            initialDelaySeconds: 15
+            initialDelaySeconds: 20
             periodSeconds: 10
 ---
 apiVersion: v1
