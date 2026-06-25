@@ -37,3 +37,4 @@ src/main/resources/application-local.yml
 
 ### VS Code ###
 .vscode/
+k8s\aurora-secret.yml
